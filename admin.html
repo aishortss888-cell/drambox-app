@@ -1,505 +1,88 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DramaBox Pro - Admin Dashboard</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DramaBox Admin - ระบบจัดการหลังบ้าน</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>@import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap'); body { font-family: 'Prompt', sans-serif; background-color: #0f172a; color: #f8fafc; }</style>
 </head>
-<body class="bg-slate-950 text-white min-h-screen font-sans">
-
-  <!-- Header -->
-  <header class="bg-slate-900 border-b border-slate-800 p-4 sticky top-0 z-50">
-    <div class="max-w-md mx-auto flex justify-between items-center">
-      <h1 class="text-base font-bold text-amber-500 flex items-center gap-1.5">⚙️ Admin Dashboard</h1>
-      <a href="index.html" class="text-xs text-slate-400 hover:text-white border border-slate-700 px-3 py-1 rounded-full transition">
-        🎬 กลับไปหน้าคนดู
-      </a>
-    </div>
-  </header>
-
-  <main class="max-w-md mx-auto pb-10 p-4 space-y-6">
-
-    <!-- สรุปสถิติภาพรวม -->
-    <div class="space-y-2">
-      <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider">📊 สรุปสถิติระบบภาพรวม</h2>
-      <div class="grid grid-cols-2 gap-2">
-        <div class="bg-slate-900 p-3 rounded-xl border border-slate-800">
-          <span class="text-[10px] text-slate-400">👥 ยอดผู้ใช้งานทั้งหมด</span>
-          <div id="admMemberCount" class="text-base font-extrabold text-blue-400 mt-1">0 คน</div>
-        </div>
-        <div class="bg-slate-900 p-3 rounded-xl border border-slate-800">
-          <span class="text-[10px] text-slate-400">💰 รายได้สะสมทั้งหมด</span>
-          <div id="admRevenue" class="text-base font-extrabold text-green-400 mt-1">฿0.00</div>
-        </div>
-        <div class="bg-slate-900 p-3 rounded-xl border border-slate-800">
-          <span class="text-[10px] text-slate-400">📢 ยอดการแสดงโฆษณา</span>
-          <div id="admAdViews" class="text-base font-extrabold text-amber-400 mt-1">0 ครั้ง</div>
-        </div>
-        <div class="bg-slate-900 p-3 rounded-xl border border-slate-800">
-          <span class="text-[10px] text-slate-400">👁️ ยอดวิวซีรีส์รวมทุกตอน</span>
-          <div id="admTotalEpViews" class="text-base font-extrabold text-red-400 mt-1">0 วิว</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- แผงรายชื่อผู้ใช้งานระบบ -->
-    <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 space-y-3">
-      <div class="flex justify-between items-center">
-        <h2 class="text-sm font-bold text-blue-400 flex items-center gap-1.5">👥 แผงจัดการผู้ใช้งานในระบบ</h2>
-        <span id="userCountBadge" class="text-[10px] bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded-full border border-blue-500/30">0 สมาชิก</span>
-      </div>
-      <div id="registeredUsersList" class="space-y-2 text-xs"></div>
-    </div>
-
-    <!-- Modal สำหรับแก้ไขข้อมูลสมาชิก -->
-    <div id="editUserModal" class="hidden fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 max-w-xs w-full space-y-4 shadow-2xl relative">
-        <div class="flex justify-between items-center border-b border-slate-800 pb-2">
-          <h3 class="font-bold text-sm text-blue-400">✏️ แก้ไขข้อมูลสมาชิก</h3>
-          <button onclick="closeEditUserModal()" class="text-slate-500 hover:text-white text-xs">✕ ปิด</button>
+<body class="bg-slate-950 min-h-screen p-4 flex justify-center">
+    <div class="w-full max-w-md bg-slate-900 min-h-screen p-4 rounded-2xl border border-slate-800 flex flex-col">
+        <div class="flex justify-between items-center pb-3 border-b border-slate-800 mb-4">
+            <h1 class="text-base font-bold text-white flex items-center space-x-2">
+                <i class="fa-solid fa-gear text-rose-500"></i>
+                <span>ระบบจัดการแอดมิน (Admin Panel)</span>
+            </h1>
+            <a href="index.html" class="text-xs text-rose-400 hover:underline"><i class="fa-solid fa-arrow-left mr-1"></i>ไปหน้าเว็บคนดู</a>
         </div>
 
-        <form onsubmit="saveUserEdit(event)" class="space-y-3">
-          <input type="hidden" id="editUserId">
-          <div>
-            <label class="block text-[11px] text-slate-400 mb-1">ชื่อผู้ใช้งาน</label>
-            <input type="text" id="editUserName" required class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-xs text-white">
-          </div>
-          <div>
-            <label class="block text-[11px] text-slate-400 mb-1">อีเมลผู้ใช้งาน</label>
-            <input type="email" id="editUserEmail" required class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-xs text-white">
-          </div>
-          <div>
-            <label class="block text-[11px] text-slate-400 mb-1">รหัสผ่าน</label>
-            <input type="password" id="editUserPassword" required class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-xs text-white">
-          </div>
-          <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 rounded-xl text-xs transition shadow-lg">
-            💾 บันทึกการแก้ไข
-          </button>
-        </form>
-      </div>
-    </div>
+        <div class="space-y-4 flex-1">
+            <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
+                <h2 class="text-sm font-semibold mb-3 text-white">เพิ่มซีรีส์ใหม่</h2>
+                <input type="text" id="newTitle" placeholder="ชื่อซีรีส์" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-xs text-white mb-2">
+                <input type="text" id="newCategory" placeholder="หมวดหมู่ (เช่น ดราม่า, โรแมนติก)" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-xs text-white mb-2">
+                <input type="text" id="newCover" placeholder="ลิงก์รูปภาพปกซีรีส์" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-xs text-white mb-2">
+                <input type="text" id="newVideoUrl" placeholder="ลิงก์วิดีโอตอนที่ 1 (.mp4)" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-xs text-white mb-3">
+                <button onclick="addNewDrama()" class="w-full bg-rose-600 hover:bg-rose-500 text-white font-medium py-2.5 rounded-lg text-xs shadow-lg">บันทึกเพิ่มซีรีส์</button>
+            </div>
 
-    <!-- รายการรอตรวจสอบสลิป -->
-    <div class="bg-slate-900 p-4 rounded-xl border border-amber-500/40 space-y-3">
-      <div class="flex justify-between items-center">
-        <h2 class="text-sm font-bold text-amber-400 flex items-center gap-1.5">🧾 ตรวจสอบสลิปสมัคร VIP</h2>
-        <span id="pendingCountTxt" class="text-[10px] bg-amber-500/20 text-amber-400 px-2 py-0.5 rounded-full border border-amber-500/30">0 รายการ</span>
-      </div>
-      <div id="pendingSlipsList" class="space-y-3"></div>
-    </div>
-
-    <!-- ตั้งค่า QR Code ธนาคาร -->
-    <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 space-y-3">
-      <h2 class="text-sm font-bold text-amber-400 flex items-center gap-1">🏦 ตั้งค่า QR Code รับเงิน</h2>
-      <form onsubmit="saveBankQr(event)" class="space-y-2.5">
-        <div>
-          <label class="block text-[11px] text-slate-400 mb-1">ชื่อบัญชีธนาคาร</label>
-          <input type="text" id="admBankNameInput" placeholder="เช่น นายสมชาย ใจดี" required class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-xs text-white">
+            <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
+                <h2 class="text-sm font-semibold mb-3 text-white">รายการซีรีส์ทั้งหมดในระบบ</h2>
+                <div id="adminDramaList" class="space-y-2 max-h-72 overflow-y-auto"></div>
+            </div>
         </div>
-        <div>
-          <label class="block text-[11px] text-slate-400 mb-1">URL รูปภาพ QR Code ธนาคาร</label>
-          <input type="url" id="admQrUrlInput" placeholder="https://..." required class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-xs text-white">
-        </div>
-        <button type="submit" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-2 rounded-lg text-xs">
-          💾 บันทึก QR Code ธนาคาร
-        </button>
-      </form>
     </div>
 
-    <!-- เพิ่มเรื่องใหม่ -->
-    <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 space-y-3">
-      <h2 class="text-sm font-bold text-red-500">🎬 เพิ่มซีรีส์เรื่องใหม่</h2>
-      <form onsubmit="addNewSeries(event)" class="space-y-2.5">
-        <input type="text" id="newTitle" placeholder="ชื่อเรื่อง" required class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-xs text-white">
-        <input type="url" id="newCover" placeholder="URL รูปปกเรื่อง" required class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-xs text-white">
-        <button type="submit" class="w-full bg-slate-800 hover:bg-slate-700 text-red-400 font-bold py-2 rounded-lg text-xs border border-slate-700">
-          ➕ สร้างเรื่องใหม่
-        </button>
-      </form>
-    </div>
+    <script>
+        let dramas = JSON.parse(localStorage.getItem('db_dramas')) || [
+            { id: 1, title: 'เกิดใหม่เป็นเถ้าแก่พะโล้', category: 'ดราม่า', cover: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500&auto=format&fit=crop&q=60', views: '45.2K', eps: 2, video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4' }
+        ];
 
-    <!-- ฟอร์มเพิ่ม/แก้ไข ตอนย่อย -->
-    <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 space-y-3" id="epFormContainer">
-      <div class="flex justify-between items-center">
-        <h2 class="text-sm font-bold text-red-500" id="epFormTitle">➕ เพิ่ม / แก้ไข ตอนย่อย (EP)</h2>
-        <button type="button" onclick="resetEpForm()" id="cancelEditBtn" class="hidden text-[10px] text-slate-400 underline">ยกเลิกการแก้ไข</button>
-      </div>
-      
-      <form onsubmit="saveEpisode(event)" class="space-y-2.5">
-        <input type="hidden" id="editingEpNum" value="">
-        <label class="block text-[11px] text-slate-400 mb-1">เลือกซีรีส์</label>
-        <select id="admSeriesSelect" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-xs text-white"></select>
-        <label class="block text-[11px] text-slate-400 mb-1">ตอนที่ (EP Number)</label>
-        <input type="number" id="admEpNum" value="1" min="1" required class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-xs text-white">
-        <label class="block text-[11px] text-slate-400 mb-1">URL รูปปกตอนย่อย</label>
-        <input type="url" id="admImage" placeholder="https://..." required class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-xs text-white">
-        <label class="block text-[11px] text-slate-400 mb-1">URL ไฟล์วิดีโอ MP4</label>
-        <input type="url" id="admVideo" placeholder="https://..." required class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-xs text-white">
-        <button type="submit" id="saveEpBtn" class="w-full bg-red-600 hover:bg-red-700 font-bold py-2 rounded-lg text-xs text-white">
-          💾 บันทึกตอนย่อย
-        </button>
-      </form>
-    </div>
-
-    <!-- รายการซีรีส์ -->
-    <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 space-y-3">
-      <h3 class="text-xs font-bold text-slate-300">จัดการซีรีส์ และตอนย่อย</h3>
-      <div id="adminSeriesList" class="space-y-4 text-xs"></div>
-    </div>
-
-  </main>
-
-  <script>
-    let dramaData = JSON.parse(localStorage.getItem('drama_data')) || [];
-    let registeredUsers = JSON.parse(localStorage.getItem('registered_users')) || [];
-    let stats = JSON.parse(localStorage.getItem('ad_stats')) || { adViews: 0, revenue: 0.00 };
-    let bankSettings = JSON.parse(localStorage.getItem('bank_settings')) || { name: "แอดมิน DramaBox Pro", qrUrl: "" };
-    let pendingSlips = JSON.parse(localStorage.getItem('pending_slips')) || [];
-
-    function renderAdminView() {
-      let totalEpViews = 0;
-      dramaData.forEach(s => {
-        s.episodes.forEach(ep => { totalEpViews += ep.views; });
-      });
-
-      document.getElementById('admMemberCount').innerText = `${registeredUsers.length} คน`;
-      document.getElementById('admRevenue').innerText = `฿${stats.revenue.toFixed(2)}`;
-      document.getElementById('admAdViews').innerText = `${stats.adViews} ครั้ง`;
-      document.getElementById('admTotalEpViews').innerText = `${totalEpViews} วิว`;
-      
-      document.getElementById('admBankNameInput').value = bankSettings.name || '';
-      document.getElementById('admQrUrlInput').value = bankSettings.qrUrl || '';
-
-      renderRegisteredUsersList();
-      renderPendingSlips();
-
-      const select = document.getElementById('admSeriesSelect');
-      select.innerHTML = '';
-      dramaData.forEach(s => {
-        select.innerHTML += `<option value="${s.id}">${s.title}</option>`;
-      });
-
-      const list = document.getElementById('adminSeriesList');
-      list.innerHTML = '';
-
-      dramaData.forEach(s => {
-        const totalViews = s.episodes.reduce((sum, ep) => sum + ep.views, 0);
-        let epListHtml = '';
-        if (s.episodes.length === 0) {
-          epListHtml = `<div class="text-[10px] text-slate-500 pl-2">ไม่มีตอนย่อย</div>`;
-        } else {
-          s.episodes.forEach(ep => {
-            epListHtml += `
-              <div class="flex justify-between items-center bg-slate-900/80 p-2 rounded border border-slate-700/50 mt-1.5">
-                <div>
-                  <span class="font-bold text-red-400">EP.${ep.epNum}</span>
-                  <span class="text-[10px] text-slate-400 ml-2">(${ep.views} วิว)</span>
+        function renderAdminList() {
+            const list = document.getElementById('adminDramaList');
+            if(dramas.length === 0) {
+                list.innerHTML = '<p class="text-xs text-slate-500 text-center py-4">ยังไม่มีซีรีส์ในระบบ</p>';
+                return;
+            }
+            list.innerHTML = dramas.map(d => `
+                <div class="flex justify-between items-center bg-slate-900 p-3 rounded-lg text-xs border border-slate-800">
+                    <div>
+                        <span class="text-white font-medium block">${d.title}</span>
+                        <span class="text-[10px] text-slate-400">${d.category} • ${d.eps} ตอน</span>
+                    </div>
+                    <button onclick="deleteDrama(${d.id})" class="text-rose-400 hover:text-rose-300 p-1.5"><i class="fa-solid fa-trash"></i></button>
                 </div>
-                <div class="flex gap-2">
-                  <button onclick="editEpisode('${s.id}', ${ep.epNum})" class="text-[10px] text-yellow-400 hover:underline">✏️ แก้ไข</button>
-                  <button onclick="deleteEpisode('${s.id}', ${ep.epNum})" class="text-[10px] text-red-400 hover:underline">🗑️ ลบตอน</button>
-                </div>
-              </div>
-            `;
-          });
+            `).join('');
         }
 
-        list.innerHTML += `
-          <div class="bg-slate-800 p-3 rounded-lg border border-slate-700 space-y-2">
-            <div class="flex justify-between items-center border-b border-slate-700 pb-2">
-              <div>
-                <div class="font-bold text-white text-sm flex items-center gap-1.5">
-                  ${s.title}
-                  ${s.isPinned ? '<span class="text-[9px] bg-amber-500/20 text-amber-400 px-1.5 py-0.2 rounded border border-amber-500/30">📌 ปักหมุด</span>' : ''}
-                </div>
-                <div class="text-[10px] text-slate-400">วิวรวม: ${totalViews} | มี ${s.episodes.length} ตอน</div>
-              </div>
-              <div class="flex items-center gap-2">
-                <button onclick="togglePin('${s.id}')" class="text-[10px] px-2 py-1 rounded transition font-bold ${s.isPinned ? 'bg-amber-500 text-black' : 'bg-slate-700 text-slate-300'}">
-                  ${s.isPinned ? '❌ ถอดปักหมุด' : '📌 ปักหมุด'}
-                </button>
-                <button onclick="deleteSeries('${s.id}')" class="text-[10px] text-red-400 hover:underline">🗑️ ลบเรื่อง</button>
-              </div>
-            </div>
-            <div class="pl-1">${epListHtml}</div>
-          </div>
-        `;
-      });
-    }
-
-    function renderRegisteredUsersList() {
-      const container = document.getElementById('registeredUsersList');
-      document.getElementById('userCountBadge').innerText = `${registeredUsers.length} สมาชิก`;
-
-      if (registeredUsers.length === 0) {
-        container.innerHTML = `<div class="text-xs text-slate-500 text-center py-2">ยังไม่มีผู้ใช้งานในระบบ</div>`;
-        return;
-      }
-
-      container.innerHTML = '';
-      registeredUsers.forEach(u => {
-        container.innerHTML += `
-          <div class="bg-slate-800 p-3 rounded-lg border border-slate-700 space-y-2">
-            <div class="flex justify-between items-center">
-              <div>
-                <div class="font-bold text-white flex items-center gap-1.5">
-                  ${u.name}
-                  ${u.isVip ? '<span class="text-[9px] bg-amber-500 text-slate-950 font-bold px-1.5 py-0.2 rounded">VIP</span>' : '<span class="text-[9px] bg-slate-700 text-slate-300 px-1.5 py-0.2 rounded">ทั่วไป</span>'}
-                </div>
-                <div class="text-[10px] text-slate-400">${u.email}</div>
-              </div>
-              <button onclick="toggleUserVip('${u.id}')" class="text-[10px] px-2 py-1 rounded font-bold transition ${u.isVip ? 'bg-slate-700 hover:bg-slate-600 text-amber-400' : 'bg-amber-500 hover:bg-amber-400 text-slate-950'}">
-                ${u.isVip ? 'ยกเลิก VIP' : 'ปรับเป็น VIP'}
-              </button>
-            </div>
-            <div class="flex gap-2 justify-end border-t border-slate-700/50 pt-2">
-              <button onclick="openEditUserModal('${u.id}')" class="text-[10px] bg-blue-600/20 text-blue-400 hover:bg-blue-600/30 border border-blue-500/30 px-2 py-1 rounded">✏️ แก้ไขข้อมูล</button>
-              <button onclick="deleteUser('${u.id}')" class="text-[10px] bg-red-600/20 text-red-400 hover:bg-red-600/30 border border-red-500/30 px-2 py-1 rounded">🗑️ ลบสมาชิก</button>
-            </div>
-          </div>
-        `;
-      });
-    }
-
-    function toggleUserVip(userId) {
-      const user = registeredUsers.find(u => u.id === userId);
-      if (user) {
-        user.isVip = !user.isVip;
-        localStorage.setItem('registered_users', JSON.stringify(registeredUsers));
-        renderAdminView();
-      }
-    }
-
-    function openEditUserModal(userId) {
-      const user = registeredUsers.find(u => u.id === userId);
-      if (!user) return;
-
-      document.getElementById('editUserId').value = user.id;
-      document.getElementById('editUserName').value = user.name;
-      document.getElementById('editUserEmail').value = user.email;
-      document.getElementById('editUserPassword').value = user.password;
-
-      document.getElementById('editUserModal').classList.remove('hidden');
-    }
-
-    function closeEditUserModal() { document.getElementById('editUserModal').classList.add('hidden'); }
-
-    function saveUserEdit(e) {
-      e.preventDefault();
-      const id = document.getElementById('editUserId').value;
-      const user = registeredUsers.find(u => u.id === id);
-
-      if (user) {
-        user.name = document.getElementById('editUserName').value.trim();
-        user.email = document.getElementById('editUserEmail').value.trim();
-        user.password = document.getElementById('editUserPassword').value.trim();
-
-        localStorage.setItem('registered_users', JSON.stringify(registeredUsers));
-        alert('✅ บันทึกการแก้ไขข้อมูลสมาชิกเรียบร้อยแล้ว!');
-        closeEditUserModal();
-        renderAdminView();
-      }
-    }
-
-    function deleteUser(userId) {
-      const user = registeredUsers.find(u => u.id === userId);
-      if (!user) return;
-
-      if (confirm(`คุณต้องการลบสมาชิกคุณ "${user.name}" ออกจากระบบใช่หรือไม่?`)) {
-        registeredUsers = registeredUsers.filter(u => u.id !== userId);
-        localStorage.setItem('registered_users', JSON.stringify(registeredUsers));
-        alert('🗑️ ลบสมาชิกเรียบร้อยแล้ว');
-        renderAdminView();
-      }
-    }
-
-    function renderPendingSlips() {
-      const container = document.getElementById('pendingSlipsList');
-      document.getElementById('pendingCountTxt').innerText = `${pendingSlips.length} รายการ`;
-
-      if (pendingSlips.length === 0) {
-        container.innerHTML = `<div class="text-xs text-slate-500 text-center py-4">ไม่มีรายการสลิปที่รอตรวจสอบ</div>`;
-        return;
-      }
-
-      container.innerHTML = '';
-      pendingSlips.forEach((slip, index) => {
-        container.innerHTML += `
-          <div class="bg-slate-800 p-3 rounded-xl border border-slate-700 space-y-2">
-            <div class="flex justify-between items-center text-xs">
-              <span class="font-bold text-amber-400">👑 สมัครสมาชิก VIP</span>
-              <span class="text-[10px] text-slate-400">เวลา ${slip.time} น.</span>
-            </div>
-            <div class="text-xs text-slate-300">
-              ชื่อผู้ใช้งาน: <strong class="text-white">${slip.userName}</strong> (${slip.userEmail})
-            </div>
+        function addNewDrama() {
+            const title = document.getElementById('newTitle').value;
+            const category = document.getElementById('newCategory').value;
+            const cover = document.getElementById('newCover').value;
+            const video = document.getElementById('newVideoUrl').value;
+            if(!title || !cover || !video) { alert('กรุณากรอกข้อมูลให้ครบถ้วน'); return; }
             
-            <div class="flex gap-3 items-center">
-              <a href="${slip.slipImage}" target="_blank" class="block w-20 h-24 bg-slate-950 rounded border border-slate-700 overflow-hidden flex-none">
-                <img src="${slip.slipImage}" class="w-full h-full object-cover" title="คลิกดูภาพใหญ่">
-              </a>
-              <div class="space-y-1">
-                <div class="text-xs text-slate-300">ยอดเงิน: <strong class="text-white text-sm">฿${slip.amount.toFixed(2)}</strong></div>
-                <p class="text-[10px] text-slate-400">คลิกที่รูปเพื่อเปิดดูสลิปฉบับเต็ม</p>
-              </div>
-            </div>
-
-            <div class="flex gap-2 pt-1">
-              <button onclick="approveSlip(${index})" class="flex-1 bg-green-600 hover:bg-green-500 text-white font-bold py-1.5 rounded-lg text-xs">
-                ✅ อนุมัติสิทธิ์ VIP
-              </button>
-              <button onclick="rejectSlip(${index})" class="flex-1 bg-red-600 hover:bg-red-500 text-white font-bold py-1.5 rounded-lg text-xs">
-                ❌ ปฏิเสธ
-              </button>
-            </div>
-          </div>
-        `;
-      });
-    }
-
-    function approveSlip(index) {
-      const slip = pendingSlips[index];
-      if (!slip) return;
-
-      const user = registeredUsers.find(u => u.id === slip.userId);
-      if (user) {
-        user.isVip = true;
-      }
-
-      stats.revenue += slip.amount;
-      pendingSlips.splice(index, 1);
-
-      localStorage.setItem('registered_users', JSON.stringify(registeredUsers));
-      localStorage.setItem('ad_stats', JSON.stringify(stats));
-      localStorage.setItem('pending_slips', JSON.stringify(pendingSlips));
-
-      alert(`✅ อนุมัติสิทธิ์ VIP เรียบร้อยแล้ว!`);
-      renderAdminView();
-    }
-
-    function rejectSlip(index) {
-      if (confirm('คุณต้องการปฏิเสธสลิปนี้ใช่หรือไม่?')) {
-        pendingSlips.splice(index, 1);
-        localStorage.setItem('pending_slips', JSON.stringify(pendingSlips));
-        renderAdminView();
-      }
-    }
-
-    function saveBankQr(e) {
-      e.preventDefault();
-      bankSettings.name = document.getElementById('admBankNameInput').value;
-      bankSettings.qrUrl = document.getElementById('admQrUrlInput').value;
-      localStorage.setItem('bank_settings', JSON.stringify(bankSettings));
-      alert('บันทึกข้อมูล QR Code เรียบร้อยแล้ว!');
-    }
-
-    function togglePin(seriesId) {
-      const series = dramaData.find(s => s.id === seriesId);
-      if (series) {
-        series.isPinned = !series.isPinned;
-        localStorage.setItem('drama_data', JSON.stringify(dramaData));
-        renderAdminView();
-      }
-    }
-
-    function editEpisode(seriesId, epNum) {
-      const series = dramaData.find(s => s.id === seriesId);
-      if (!series) return;
-      const ep = series.episodes.find(e => e.epNum === epNum);
-      if (!ep) return;
-
-      document.getElementById('admSeriesSelect').value = seriesId;
-      document.getElementById('admEpNum').value = ep.epNum;
-      document.getElementById('admImage').value = ep.image;
-      document.getElementById('admVideo').value = ep.video;
-      document.getElementById('editingEpNum').value = ep.epNum;
-
-      document.getElementById('epFormTitle').innerText = `✏️ แก้ไข: ${series.title} (EP.${ep.epNum})`;
-      document.getElementById('saveEpBtn').innerText = "💾 บันทึกการแก้ไข";
-      document.getElementById('cancelEditBtn').classList.remove('hidden');
-      document.getElementById('epFormContainer').scrollIntoView({ behavior: 'smooth' });
-    }
-
-    function resetEpForm() {
-      document.getElementById('editingEpNum').value = '';
-      document.getElementById('admEpNum').value = '1';
-      document.getElementById('admImage').value = '';
-      document.getElementById('admVideo').value = '';
-      document.getElementById('epFormTitle').innerText = "➕ เพิ่ม / แก้ไข ตอนย่อย (EP)";
-      document.getElementById('saveEpBtn').innerText = "💾 บันทึกตอนย่อย";
-      document.getElementById('cancelEditBtn').classList.add('hidden');
-    }
-
-    function saveEpisode(e) {
-      e.preventDefault();
-      const seriesId = document.getElementById('admSeriesSelect').value;
-      const epNum = parseInt(document.getElementById('admEpNum').value);
-      const image = document.getElementById('admImage').value;
-      const video = document.getElementById('admVideo').value;
-      const editingEpNum = document.getElementById('editingEpNum').value;
-
-      const series = dramaData.find(s => s.id === seriesId);
-      if (!series) return;
-
-      if (editingEpNum !== '') {
-        const epIndex = series.episodes.findIndex(e => e.epNum === parseInt(editingEpNum));
-        if (epIndex !== -1) {
-          series.episodes[epIndex].epNum = epNum;
-          series.episodes[epIndex].image = image;
-          series.episodes[epIndex].video = video;
-          alert(`อัปเดตข้อมูล EP.${epNum} เรียบร้อย!`);
+            dramas.push({ id: Date.now(), title, category: category || 'ทั่วไป', cover, views: '1.0K', eps: 2, video });
+            localStorage.setItem('db_dramas', JSON.stringify(dramas));
+            alert('เพิ่มซีรีส์สำเร็จ!');
+            document.getElementById('newTitle').value = '';
+            document.getElementById('newCover').value = '';
+            document.getElementById('newVideoUrl').value = '';
+            renderAdminList();
         }
-      } else {
-        const existingEp = series.episodes.find(e => e.epNum === epNum);
-        if (existingEp) {
-          alert(`ตอนที่ ${epNum} มีอยู่แล้ว กรุณากดปุ่มแก้ไขด้านล่าง`);
-          return;
+
+        function deleteDrama(id) {
+            if(confirm('ต้องการลบซีรีส์นี้ใช่หรือไม่?')) {
+                dramas = dramas.filter(x => x.id !== id);
+                localStorage.setItem('db_dramas', JSON.stringify(dramas));
+                renderAdminList();
+            }
         }
-        series.episodes.push({ epNum, views: 0, image, video });
-        series.episodes.sort((a, b) => a.epNum - b.epNum);
-        alert(`เพิ่ม EP.${epNum} เรียบร้อย!`);
-      }
 
-      localStorage.setItem('drama_data', JSON.stringify(dramaData));
-      resetEpForm();
-      renderAdminView();
-    }
-
-    function deleteEpisode(seriesId, epNum) {
-      const series = dramaData.find(s => s.id === seriesId);
-      if (!series) return;
-
-      if (confirm(`คุณต้องการลบ EP.${epNum} ออกใช่หรือไม่?`)) {
-        series.episodes = series.episodes.filter(e => e.epNum !== epNum);
-        localStorage.setItem('drama_data', JSON.stringify(dramaData));
-        alert(`ลบ EP.${epNum} เรียบร้อยแล้ว`);
-        renderAdminView();
-      }
-    }
-
-    function deleteSeries(seriesId) {
-      if (confirm('คุณต้องการลบซีรีส์เรื่องนี้และตอนย่อยทั้งหมดหรือไม่?')) {
-        dramaData = dramaData.filter(s => s.id !== seriesId);
-        localStorage.setItem('drama_data', JSON.stringify(dramaData));
-        renderAdminView();
-      }
-    }
-
-    function addNewSeries(e) {
-      e.preventDefault();
-      const title = document.getElementById('newTitle').value;
-      const cover = document.getElementById('newCover').value;
-      dramaData.unshift({ id: "S_" + Date.now(), title, cover, isPinned: false, episodes: [] });
-      localStorage.setItem('drama_data', JSON.stringify(dramaData));
-      alert('สร้างซีรีส์ใหม่สำเร็จ!');
-      document.getElementById('newTitle').value = '';
-      document.getElementById('newCover').value = '';
-      renderAdminView();
-    }
-
-    renderAdminView();
-  </script>
+        renderAdminList();
+    </script>
 </body>
 </html>
+
