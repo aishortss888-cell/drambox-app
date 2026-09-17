@@ -1,538 +1,185 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DramaBox Pro - ดูซีรีส์สั้นแนวตั้ง</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DramaBox Pro - สตรีมมิ่งซีรีส์สั้นสุดฮิต</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Prompt', sans-serif; background-color: #0f172a; color: #f8fafc; }
+        .hide-scroll::-webkit-scrollbar { display: none; }
+        .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
 </head>
-<body class="bg-slate-950 text-white min-h-screen font-sans">
+<body class="bg-slate-950 min-h-screen flex flex-col items-center">
 
-  <!-- Header -->
-  <header class="bg-slate-900 border-b border-slate-800 p-4 sticky top-0 z-50">
-    <div class="max-w-md mx-auto flex justify-between items-center">
-      <h1 class="text-base font-bold text-red-500 flex items-center gap-1.5">🎬 DramaBox Pro</h1>
-      <a href="admin.html" class="text-xs text-slate-400 hover:text-white border border-slate-700 px-3 py-1 rounded-full transition">
-        ⚙️ แผงควบคุมแอดมิน
-      </a>
-    </div>
-  </header>
-
-  <main class="max-w-md mx-auto pb-10 p-4 space-y-5">
-    
-    <!-- User Profile & VIP Status Banner -->
-    <div class="bg-gradient-to-r from-slate-900 via-slate-900 to-amber-950/40 border border-slate-800 p-4 rounded-2xl space-y-3 shadow-lg">
-      <div class="flex justify-between items-start">
-        <div>
-          <div class="flex items-center gap-2">
-            <span id="currentUserName" class="font-bold text-sm text-white">👤 ยังไม่ได้เข้าสู่ระบบ</span>
-            <span id="userVipBadge" class="bg-slate-800 text-slate-400 text-[9px] font-bold px-2 py-0.5 rounded-full border border-slate-700">ผู้เยี่ยมชม</span>
-          </div>
-          <p id="currentUserEmail" class="text-[10px] text-slate-400 mt-0.5">กรุณาเข้าสู่ระบบเพื่อใช้งานเต็มรูปแบบ</p>
-        </div>
-        <div id="authBtnGroup">
-          <button onclick="openAuthModal('login')" class="bg-red-600 hover:bg-red-500 text-white text-[11px] px-3 py-1.5 rounded-xl font-medium transition shadow">
-            🔑 เข้าสู่ระบบ / สมัคร
-          </button>
-        </div>
-      </div>
-
-      <div id="vipPromoBar" class="pt-2 border-t border-slate-800/80 flex justify-between items-center hidden">
-        <p class="text-[10px] text-slate-400">สมัคร VIP (฿59/เดือน) ดูซีรีส์ไร้โฆษณา</p>
-        <button onclick="openWalletModal()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-xs px-3 py-1.5 rounded-xl shadow transition flex items-center gap-1">
-          👑 ชำระเงิน VIP
-        </button>
-      </div>
-    </div>
-
-    <!-- Modal เข้าสู่ระบบ / สมัครสมาชิก -->
-    <div id="authModal" class="hidden fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 max-w-xs w-full space-y-4 shadow-2xl relative">
-        <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-slate-500 hover:text-white text-xs">✕ ปิด</button>
-
-        <div class="flex border-b border-slate-800 pb-2 gap-4">
-          <button id="tabLoginBtn" onclick="switchAuthTab('login')" class="font-bold text-sm text-red-500 border-b-2 border-red-500 pb-1">เข้าสู่ระบบ</button>
-          <button id="tabRegBtn" onclick="switchAuthTab('register')" class="font-bold text-sm text-slate-400 pb-1">สมัครสมาชิกใหม่</button>
-        </div>
-
-        <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-3">
-          <div>
-            <label class="block text-[11px] text-slate-400 mb-1">อีเมลผู้ใช้งาน</label>
-            <input type="email" id="loginEmail" placeholder="example@email.com" required class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-xs text-white">
-          </div>
-          <div>
-            <label class="block text-[11px] text-slate-400 mb-1">รหัสผ่าน</label>
-            <input type="password" id="loginPassword" placeholder="••••••••" required class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-xs text-white">
-          </div>
-          <button type="submit" class="w-full bg-red-600 hover:bg-red-500 text-white font-bold py-2 rounded-xl text-xs transition shadow-lg">
-            🔓 เข้าสู่ระบบ
-          </button>
-        </form>
-
-        <form id="registerForm" onsubmit="handleRegister(event)" class="space-y-3 hidden">
-          <div>
-            <label class="block text-[11px] text-slate-400 mb-1">ชื่อผู้ใช้งาน</label>
-            <input type="text" id="regName" placeholder="เช่น Somchai_Movie" required class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-xs text-white">
-          </div>
-          <div>
-            <label class="block text-[11px] text-slate-400 mb-1">อีเมลผู้ใช้งาน</label>
-            <input type="email" id="regEmail" placeholder="example@email.com" required class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-xs text-white">
-          </div>
-          <div>
-            <label class="block text-[11px] text-slate-400 mb-1">รหัสผ่าน</label>
-            <input type="password" id="regPassword" placeholder="อย่างน้อย 4 ตัวอักษร" required class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-xs text-white">
-          </div>
-          <button type="submit" class="w-full bg-green-600 hover:bg-green-500 text-white font-bold py-2 rounded-xl text-xs transition shadow-lg">
-            ✨ ยืนยันลงทะเบียน
-          </button>
-        </form>
-      </div>
-    </div>
-
-    <!-- Modal สแกน QR Code ชำระเงิน -->
-    <div id="walletModal" class="hidden fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 overflow-y-auto">
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 max-w-xs w-full space-y-4 shadow-2xl my-auto">
-        <div class="flex justify-between items-center border-b border-slate-800 pb-2">
-          <h3 class="font-bold text-sm text-amber-400">📱 สมัครสมาชิก VIP / ชำระเงิน</h3>
-          <button onclick="closeWalletModal()" class="text-slate-500 hover:text-white text-xs">✕ ปิด</button>
-        </div>
-
-        <div class="bg-white p-3 rounded-xl flex flex-col items-center justify-center space-y-1.5">
-          <div class="w-40 h-40 bg-slate-100 rounded-lg overflow-hidden flex items-center justify-center border border-slate-300">
-            <img id="realQrImage" src="" alt="QR Code ธนาคาร" class="w-full h-full object-contain">
-          </div>
-          <p class="text-[11px] text-slate-800 font-bold">สแกนจ่ายผ่านแอปธนาคาร</p>
-          <div class="text-[10px] text-slate-600 text-center">
-            ชื่อบัญชี: <strong id="bankAccNameTxt" class="text-slate-800">-</strong><br>
-            ยอดโอน VIP: <strong class="text-red-600 font-bold">฿59.00</strong>
-          </div>
-        </div>
-
-        <form onsubmit="submitPaymentSlip(event)" class="space-y-2.5 border-t border-slate-800 pt-3">
-          <label class="block text-[11px] font-bold text-amber-400">📎 แนบสลิปการโอนเงิน</label>
-          <input type="file" id="slipFileInput" accept="image/*" onchange="handleSlipUpload(event)" class="w-full text-[10px] text-slate-400 file:mr-2 file:py-1 file:px-2 file:rounded-lg file:border-0 file:text-[10px] file:bg-slate-800 file:text-slate-300 hover:file:bg-slate-700">
-          <input type="url" id="slipUrlInput" placeholder="หรือวาง URL สลิป https://..." class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-xs text-white">
-
-          <div id="slipPreviewBox" class="hidden w-full h-24 bg-slate-950 rounded-lg border border-slate-700 overflow-hidden flex items-center justify-center">
-            <img id="slipPreviewImg" src="" class="max-h-full object-contain">
-          </div>
-
-          <button type="submit" class="w-full bg-green-600 hover:bg-green-500 text-white font-extrabold py-2.5 rounded-xl text-xs shadow-lg transition">
-            📤 ส่งสลิปยืนยันสมัคร VIP
-          </button>
-        </form>
-      </div>
-    </div>
-
-    <!-- Pop-up โฆษณาแทรก -->
-    <div id="adModal" class="hidden fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-4">
-      <div class="bg-slate-900 border border-amber-500/30 rounded-2xl p-6 text-center max-w-xs w-full space-y-4 shadow-2xl relative">
-        <div id="adTag" class="inline-block bg-amber-500/20 text-amber-400 text-xs font-bold px-3 py-1 rounded-full border border-amber-500/30">
-          📢 โฆษณาผู้สนับสนุน
-        </div>
-        <p class="text-xs text-slate-300">สมาชิกทั่วไปต้องรับชมโฆษณา <span id="adTimer" class="text-red-500 font-bold">5</span> วินาที</p>
-        <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
-          <div id="adProgress" class="bg-red-600 h-full w-0 transition-all duration-1000"></div>
-        </div>
-        <button id="closeAdBtn" disabled onclick="finishAdAndResume()" class="w-full bg-slate-800 text-slate-500 font-bold py-2 rounded-xl text-xs">
-          รอชมโฆษณา...
-        </button>
-      </div>
-    </div>
-
-    <!-- Player View (แนวตั้ง 9:16 สไตล์ TikTok) -->
-    <div id="playerContainer" class="hidden bg-black rounded-2xl overflow-hidden border border-slate-800 shadow-2xl relative">
-      <div class="aspect-[9/16] w-full max-h-[75vh] bg-black relative flex items-center justify-center">
-        <video id="mainPlayer" controls class="w-full h-full object-cover"></video>
-        <button onclick="closePlayer()" class="absolute top-3 right-3 bg-black/60 hover:bg-black/80 text-white text-xs px-2.5 py-1 rounded-full backdrop-blur-sm z-10">
-          ✕ ปิด
-        </button>
-      </div>
-      <div class="p-3 bg-slate-900/90 backdrop-blur-md flex justify-between items-center border-t border-slate-800">
-        <div>
-          <span id="playerBadge" class="bg-red-600/20 text-red-400 font-bold px-2.5 py-0.5 rounded-full text-[10px]">EP.1</span>
-          <h3 id="playerTitle" class="text-sm font-bold mt-1 text-white">กำลังเล่น...</h3>
-        </div>
-      </div>
-    </div>
-
-    <!-- โซนเรื่องเด็ดปักหมุด -->
-    <div id="pinnedSection" class="space-y-2 hidden">
-      <h3 class="text-xs font-bold text-amber-400 flex items-center gap-1">📌 เรื่องเด็ดแนะนำพิเศษ</h3>
-      <div id="pinnedContainer" class="flex gap-3 overflow-x-auto pb-2 scrollbar-none"></div>
-    </div>
-
-    <!-- รายการซีรีส์ทั้งหมด -->
-    <div class="space-y-2">
-      <h3 class="text-xs font-bold text-slate-400">ซีรีส์ทั้งหมด</h3>
-      <div id="seriesContainer" class="space-y-6"></div>
-    </div>
-
-  </main>
-
-  <script>
-    const defaultData = [{
-      id: "S01", title: "เกิดใหม่เป็นเถ้าแก่พะโล้", cover: "https://picsum.photos/seed/s1/200/300", isPinned: true,
-      episodes: [
-        { epNum: 1, views: 0, image: "https://picsum.photos/seed/s1ep1/300/400", video: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" },
-        { epNum: 2, views: 0, image: "https://picsum.photos/seed/s1ep2/300/400", video: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4" }
-      ]
-    }];
-
-    const eCPM_THB = 35.00;
-    const VIP_PRICE = 59.00;
-
-    let dramaData = JSON.parse(localStorage.getItem('drama_data')) || defaultData;
-    let registeredUsers = JSON.parse(localStorage.getItem('registered_users')) || [];
-    let currentUserId = localStorage.getItem('current_user_id') || null;
-    let stats = JSON.parse(localStorage.getItem('ad_stats')) || { adViews: 0, revenue: 0.00 };
-    let bankSettings = JSON.parse(localStorage.getItem('bank_settings')) || {
-      name: "แอดมิน DramaBox Pro",
-      qrUrl: "https://picsum.photos/seed/qrcode/300/300"
-    };
-    let pendingSlips = JSON.parse(localStorage.getItem('pending_slips')) || [];
-
-    let currentPlaying = null;
-    let lastAdTime = 0;
-    let uploadedSlipDataUrl = "";
-
-    function getCurrentUser() {
-      return registeredUsers.find(u => u.id === currentUserId) || null;
-    }
-
-    function openAuthModal(defaultTab = 'login') {
-      document.getElementById('authModal').classList.remove('hidden');
-      switchAuthTab(defaultTab);
-    }
-    function closeAuthModal() { document.getElementById('authModal').classList.add('hidden'); }
-
-    function switchAuthTab(tab) {
-      if (tab === 'login') {
-        document.getElementById('loginForm').classList.remove('hidden');
-        document.getElementById('registerForm').classList.add('hidden');
-        document.getElementById('tabLoginBtn').className = "font-bold text-sm text-red-500 border-b-2 border-red-500 pb-1";
-        document.getElementById('tabRegBtn').className = "font-bold text-sm text-slate-400 pb-1";
-      } else {
-        document.getElementById('loginForm').classList.add('hidden');
-        document.getElementById('registerForm').classList.remove('hidden');
-        document.getElementById('tabRegBtn').className = "font-bold text-sm text-red-500 border-b-2 border-red-500 pb-1";
-        document.getElementById('tabLoginBtn').className = "font-bold text-sm text-slate-400 pb-1";
-      }
-    }
-
-    function handleLogin(e) {
-      e.preventDefault();
-      const email = document.getElementById('loginEmail').value.trim();
-      const password = document.getElementById('loginPassword').value.trim();
-      const user = registeredUsers.find(u => u.email === email && u.password === password);
-
-      if (user) {
-        currentUserId = user.id;
-        localStorage.setItem('current_user_id', currentUserId);
-        alert(`เข้าสู่ระบบสำเร็จ! ยินดีต้อนรับคุณ ${user.name}`);
-        closeAuthModal();
-        renderUserView();
-      } else {
-        alert('อีเมลหรือรหัสผ่านไม่ถูกต้อง');
-      }
-    }
-
-    function handleRegister(e) {
-      e.preventDefault();
-      const name = document.getElementById('regName').value.trim();
-      const email = document.getElementById('regEmail').value.trim();
-      const password = document.getElementById('regPassword').value.trim();
-
-      if (registeredUsers.some(u => u.email === email)) {
-        alert('อีเมลนี้ถูกใช้งานในระบบแล้ว');
-        return;
-      }
-
-      const newUser = { id: "U_" + Date.now(), name, email, password, isVip: false, registeredAt: new Date().toISOString().split('T')[0] };
-      registeredUsers.push(newUser);
-      currentUserId = newUser.id;
-
-      localStorage.setItem('registered_users', JSON.stringify(registeredUsers));
-      localStorage.setItem('current_user_id', currentUserId);
-
-      alert(`สมัครสมาชิกสำเร็จ! ยินดีต้อนรับคุณ ${name}`);
-      closeAuthModal();
-      renderUserView();
-    }
-
-    function handleLogout() {
-      if (confirm('คุณต้องการออกจากระบบใช่หรือไม่?')) {
-        currentUserId = null;
-        localStorage.removeItem('current_user_id');
-        renderUserView();
-      }
-    }
-
-    function openWalletModal() {
-      const user = getCurrentUser();
-      if (!user) {
-        alert('กรุณาเข้าสู่ระบบก่อนทำรายการสมัคร VIP');
-        openAuthModal('login');
-        return;
-      }
-      document.getElementById('walletModal').classList.remove('hidden');
-      document.getElementById('bankAccNameTxt').innerText = bankSettings.name;
-      document.getElementById('realQrImage').src = bankSettings.qrUrl;
-    }
-    function closeWalletModal() { document.getElementById('walletModal').classList.add('hidden'); }
-
-    function handleSlipUpload(event) {
-      const file = event.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          const img = new Image();
-          img.onload = function() {
-            const canvas = document.createElement('canvas');
-            const MAX_WIDTH = 600;
-            const scaleSize = MAX_WIDTH / img.width;
-            canvas.width = MAX_WIDTH;
-            canvas.height = img.height * scaleSize;
-
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
-            uploadedSlipDataUrl = canvas.toDataURL('image/jpeg', 0.7);
-            document.getElementById('slipPreviewImg').src = uploadedSlipDataUrl;
-            document.getElementById('slipPreviewBox').classList.remove('hidden');
-          };
-          img.src = e.target.result;
-        };
-        reader.readAsDataURL(file);
-      }
-    }
-
-    function submitPaymentSlip(e) {
-      e.preventDefault();
-      const currentUser = getCurrentUser();
-      const urlInput = document.getElementById('slipUrlInput').value;
-      const finalSlipImage = uploadedSlipDataUrl || urlInput;
-
-      if (!finalSlipImage) {
-        alert('กรุณาแนบไฟล์รูปสลิป หรือใส่ URL รูปสลิปก่อนส่งครับ');
-        return;
-      }
-
-      pendingSlips.push({
-        id: "SLIP_" + Date.now(),
-        userId: currentUser.id,
-        userName: currentUser.name,
-        userEmail: currentUser.email,
-        amount: VIP_PRICE,
-        slipImage: finalSlipImage,
-        time: new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' })
-      });
-
-      localStorage.setItem('pending_slips', JSON.stringify(pendingSlips));
-      uploadedSlipDataUrl = "";
-      document.getElementById('slipFileInput').value = "";
-      document.getElementById('slipUrlInput').value = "";
-      document.getElementById('slipPreviewBox').classList.add('hidden');
-
-      alert('✅ ส่งสลิปเรียบร้อยแล้ว! รอแอดมินอนุมัติสิทธิ์ VIP');
-      closeWalletModal();
-    }
-
-    function renderUserView() {
-      const user = getCurrentUser();
-      const btnGroup = document.getElementById('authBtnGroup');
-      const promoBar = document.getElementById('vipPromoBar');
-      const vipBadge = document.getElementById('userVipBadge');
-
-      if (user) {
-        document.getElementById('currentUserName').innerText = `👤 ${user.name}`;
-        document.getElementById('currentUserEmail').innerText = user.email;
-        btnGroup.innerHTML = `
-          <button onclick="handleLogout()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 text-[11px] px-3 py-1.5 rounded-xl font-medium transition">
-            🚪 ออกจากระบบ
-          </button>
-        `;
-
-        if (user.isVip) {
-          vipBadge.className = "bg-amber-500 text-slate-950 text-[9px] font-extrabold px-2 py-0.5 rounded-full border border-amber-400 shadow";
-          vipBadge.innerText = "👑 สมาชิก VIP";
-          promoBar.classList.add('hidden');
-        } else {
-          vipBadge.className = "bg-slate-800 text-slate-400 text-[9px] font-bold px-2 py-0.5 rounded-full border border-slate-700";
-          vipBadge.innerText = "สมาชิกทั่วไป (มีโฆษณา)";
-          promoBar.classList.remove('hidden');
-        }
-      } else {
-        document.getElementById('currentUserName').innerText = "👤 ยังไม่ได้เข้าสู่ระบบ";
-        document.getElementById('currentUserEmail').innerText = "กรุณาเข้าสู่ระบบเพื่อใช้งานเต็มรูปแบบ";
-        vipBadge.className = "bg-slate-800 text-slate-400 text-[9px] font-bold px-2 py-0.5 rounded-full border border-slate-700";
-        vipBadge.innerText = "ผู้เยี่ยมชม";
-        btnGroup.innerHTML = `
-          <button onclick="openAuthModal('login')" class="bg-red-600 hover:bg-red-500 text-white text-[11px] px-3 py-1.5 rounded-xl font-medium transition shadow">
-            🔑 เข้าสู่ระบบ / สมัคร
-          </button>
-        `;
-        promoBar.classList.add('hidden');
-      }
-
-      const pinnedSeries = dramaData.filter(s => s.isPinned);
-      const pinnedSection = document.getElementById('pinnedSection');
-      const pinnedContainer = document.getElementById('pinnedContainer');
-
-      if (pinnedSeries.length > 0) {
-        pinnedSection.classList.remove('hidden');
-        pinnedContainer.innerHTML = '';
-        pinnedSeries.forEach(s => {
-          pinnedContainer.innerHTML += `
-            <div onclick="startWatching('${s.id}', 1)" class="flex-none w-36 bg-gradient-to-b from-slate-900 to-slate-950 p-2 rounded-xl border border-amber-500/30 relative cursor-pointer hover:border-amber-400 transition">
-              <span class="absolute top-3 left-3 bg-amber-500 text-slate-950 text-[9px] font-extrabold px-2 py-0.5 rounded-full shadow">📌 เรื่องเด็ด</span>
-              <img src="${s.cover}" class="w-full aspect-[3/4] object-cover rounded-lg mb-2">
-              <h4 class="font-bold text-xs truncate text-white">${s.title}</h4>
-              <p class="text-[9px] text-slate-400 mt-0.5">${s.episodes.length} ตอนจบ</p>
+    <div class="w-full max-w-md bg-slate-900 min-h-screen shadow-2xl flex flex-col relative overflow-hidden pb-20">
+        <!-- HEADER (ไม่มีปุ่มแอดมินแล้ว) -->
+        <header class="px-4 py-3 bg-slate-900/85 backdrop-blur-md sticky top-0 z-40 flex justify-between items-center border-b border-slate-800">
+            <div class="flex items-center space-x-2">
+                <div class="bg-gradient-to-r from-red-600 to-rose-500 text-white font-bold px-2.5 py-1 rounded-lg text-sm tracking-wider shadow-lg">DB</div>
+                <h1 class="font-bold text-lg text-white tracking-wide">DramaBox <span class="text-rose-500 text-xs">PRO</span></h1>
             </div>
-          `;
-        });
-      } else {
-        pinnedSection.classList.add('hidden');
-      }
-
-      const container = document.getElementById('seriesContainer');
-      container.innerHTML = '';
-      dramaData.forEach(series => {
-        const div = document.createElement('div');
-        div.className = "space-y-2 pt-2 border-t border-slate-900";
-        let html = `
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-3">
-              <img src="${series.cover}" class="w-11 h-11 rounded-lg object-cover">
-              <div>
-                <h2 class="font-bold text-sm text-white flex items-center gap-1.5">
-                  ${series.title}
-                  ${series.isPinned ? '<span class="text-[9px] bg-amber-500/20 text-amber-400 px-1.5 py-0.2 rounded border border-amber-500/30">📌 เด็ด</span>' : ''}
-                </h2>
-                <span class="text-[10px] text-slate-400">${series.episodes.length} ตอน</span>
-              </div>
+            <div class="flex items-center space-x-3">
+                <button onclick="openWalletModal()" class="bg-slate-800 hover:bg-slate-700 text-amber-400 px-3 py-1.5 rounded-full text-xs font-medium flex items-center space-x-1.5 border border-amber-500/30">
+                    <i class="fa-solid fa-coins"></i>
+                    <span id="userCoins">120</span>
+                </button>
             </div>
-          </div>
-          <div class="grid grid-cols-3 gap-2">
-        `;
+        </header>
 
-        if (series.episodes.length === 0) {
-          html += `<p class="col-span-3 text-[10px] text-slate-600 py-2">ยังไม่มีตอนย่อยในเรื่องนี้</p>`;
-        } else {
-          series.episodes.forEach(ep => {
-            html += `
-              <div onclick="startWatching('${series.id}', ${ep.epNum})" class="relative rounded-lg overflow-hidden aspect-[3/4] bg-slate-900 cursor-pointer border border-slate-800 hover:border-red-500 transition">
-                <img src="${ep.image}" class="w-full h-full object-cover">
-                <span class="absolute top-1 left-1 text-[10px] font-bold text-white drop-shadow">EP.${ep.epNum}</span>
-                <span class="absolute bottom-1 left-1 text-[9px] text-white font-medium drop-shadow">▷ ${ep.views} วิว</span>
-              </div>
-            `;
-          });
+        <!-- MAIN VIEW -->
+        <main id="mainContent" class="flex-1 overflow-y-auto hide-scroll">
+            <!-- Dynamic Content -->
+        </main>
+
+        <!-- BOTTOM NAV -->
+        <nav class="absolute bottom-0 left-0 right-0 bg-slate-900/95 backdrop-blur-md border-t border-slate-800 px-6 py-2.5 flex justify-between items-center z-40">
+            <button onclick="switchTab('home')" id="nav-home" class="flex flex-col items-center text-rose-500 transition">
+                <i class="fa-solid fa-house text-lg"></i>
+                <span class="text-[10px] mt-1 font-medium">หน้าแรก</span>
+            </button>
+            <button onclick="switchTab('explore')" id="nav-explore" class="flex flex-col items-center text-slate-400 hover:text-slate-200 transition">
+                <i class="fa-solid fa-compass text-lg"></i>
+                <span class="text-[10px] mt-1 font-medium">สำรวจ</span>
+            </button>
+            <button onclick="switchTab('vip')" id="nav-vip" class="flex flex-col items-center text-slate-400 hover:text-slate-200 transition">
+                <i class="fa-solid fa-crown text-lg text-amber-400"></i>
+                <span class="text-[10px] mt-1 font-medium">VIP</span>
+            </button>
+            <button onclick="switchTab('profile')" id="nav-profile" class="flex flex-col items-center text-slate-400 hover:text-slate-200 transition">
+                <i class="fa-solid fa-user text-lg"></i>
+                <span class="text-[10px] mt-1 font-medium">ฉัน</span>
+            </button>
+        </nav>
+
+        <!-- VIDEO PLAYER MODAL -->
+        <div id="playerModal" class="fixed inset-0 bg-black z-50 hidden flex flex-col">
+            <div class="relative w-full aspect-[9/16] bg-black max-h-[60vh] flex items-center justify-center">
+                <video id="videoPlayer" class="w-full h-full object-contain" controls autoplay playsinline></video>
+                <button onclick="closePlayer()" class="absolute top-4 left-4 bg-black/60 text-white w-9 h-9 rounded-full flex items-center justify-center backdrop-blur-sm"><i class="fa-solid fa-arrow-left"></i></button>
+            </div>
+            <div class="flex-1 bg-slate-900 p-4 overflow-y-auto rounded-t-2xl -mt-4 relative z-10">
+                <div class="flex justify-between items-start mb-3">
+                    <div>
+                        <h2 id="playerDramaTitle" class="text-lg font-bold text-white">ชื่อซีรีส์</h2>
+                        <p id="playerEpTitle" class="text-xs text-slate-400">ตอนที่ 1</p>
+                    </div>
+                    <button onclick="toggleFavorite()" id="favBtn" class="text-slate-400 text-xl"><i class="fa-regular fa-heart"></i></button>
+                </div>
+                <div class="border-t border-slate-800 pt-3">
+                    <h3 class="text-xs font-semibold text-slate-400 mb-2">เลือกตอนทั้งหมด</h3>
+                    <div id="episodesListGrid" class="grid grid-cols-5 gap-2"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- WALLET MODAL -->
+        <div id="walletModal" class="fixed inset-0 bg-black/80 z-50 hidden flex items-end justify-center">
+            <div class="bg-slate-900 w-full max-w-md p-6 rounded-t-3xl border-t border-slate-800">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-bold text-white flex items-center space-x-2"><i class="fa-solid fa-coins text-amber-400"></i><span>เติมเหรียญ DramaBox</span></h3>
+                    <button onclick="closeWalletModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+                </div>
+                <div class="grid grid-cols-2 gap-3 mb-4">
+                    <div onclick="rechargeCoins(100)" class="bg-slate-800 border border-slate-700 hover:border-amber-500 p-3 rounded-xl cursor-pointer text-center">
+                        <div class="text-amber-400 font-bold text-lg">100 เหรียญ</div>
+                        <div class="text-xs text-slate-400">35 บาท</div>
+                    </div>
+                    <div onclick="rechargeCoins(300)" class="bg-slate-800 border border-slate-700 hover:border-amber-500 p-3 rounded-xl cursor-pointer text-center">
+                        <div class="text-amber-400 font-bold text-lg">300 เหรียญ</div>
+                        <div class="text-xs text-slate-400">99 บาท</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let dramas = JSON.parse(localStorage.getItem('db_dramas')) || [
+            { id: 1, title: 'เกิดใหม่เป็นเถ้าแก่พะโล้', category: 'ดราม่า', cover: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=500&auto=format&fit=crop&q=60', views: '45.2K', eps: 2, video: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4' }
+        ];
+
+        let userCoins = parseInt(localStorage.getItem('db_coins')) || 120;
+        let favorites = JSON.parse(localStorage.getItem('db_fav')) || [];
+        let currentTab = 'home';
+        let activeDrama = null;
+
+        document.getElementById('userCoins').innerText = userCoins;
+
+        function switchTab(tab) {
+            currentTab = tab;
+            ['home', 'explore', 'vip', 'profile'].forEach(t => {
+                const btn = document.getElementById(`nav-${t}`);
+                btn.className = t === tab ? "flex flex-col items-center text-rose-500 transition" : "flex flex-col items-center text-slate-400 hover:text-slate-200 transition";
+            });
+            renderContent();
         }
 
-        html += `</div>`;
-        div.innerHTML = html;
-        container.appendChild(div);
-      });
-    }
-
-    function startWatching(seriesId, epNum) {
-      const user = getCurrentUser();
-      if (!user) {
-        alert('กรุณาเข้าสู่ระบบก่อนรับชมซีรีส์ครับ');
-        openAuthModal('login');
-        return;
-      }
-
-      const series = dramaData.find(s => s.id === seriesId);
-      const ep = series ? series.episodes.find(e => e.epNum === epNum) : null;
-      if (!ep) {
-        alert('ยังไม่มีตอนย่อยในเรื่องนี้');
-        return;
-      }
-      
-      ep.views += 1;
-      localStorage.setItem('drama_data', JSON.stringify(dramaData));
-
-      currentPlaying = { seriesId, epNum, ep };
-      lastAdTime = 0;
-
-      if (user.isVip) {
-        playVideoDirectly();
-      } else {
-        triggerAdModal("📢 โฆษณาผู้สนับสนุน (ก่อนรับชม)");
-      }
-    }
-
-    const player = document.getElementById('mainPlayer');
-    player.ontimeupdate = function() {
-      const user = getCurrentUser();
-      if (user && user.isVip) return;
-
-      const currentTime = Math.floor(player.currentTime);
-      if (currentTime > 0 && currentTime % 15 === 0 && currentTime !== lastAdTime) {
-        lastAdTime = currentTime;
-        player.pause();
-        triggerAdModal("⚡ โฆษณาแทรกระหว่างรับชม");
-      }
-    };
-
-    function playVideoDirectly() {
-      const playerContainer = document.getElementById('playerContainer');
-      playerContainer.classList.remove('hidden');
-      if (player.src !== currentPlaying.ep.video) {
-        player.src = currentPlaying.ep.video;
-      }
-      player.play();
-      document.getElementById('playerBadge').innerText = `EP.${currentPlaying.ep.epNum}`;
-      document.getElementById('playerTitle').innerText = `ตอนที่ ${currentPlaying.ep.epNum}`;
-      renderUserView();
-    }
-
-    function triggerAdModal(tagText) {
-      const modal = document.getElementById('adModal');
-      const timer = document.getElementById('adTimer');
-      const progress = document.getElementById('adProgress');
-      const btn = document.getElementById('closeAdBtn');
-      document.getElementById('adTag').innerText = tagText;
-
-      modal.classList.remove('hidden');
-      btn.disabled = true;
-      btn.className = "w-full bg-slate-800 text-slate-500 font-bold py-2 rounded-xl text-xs";
-      btn.innerText = "รอชมโฆษณา...";
-      progress.style.width = "0%";
-
-      let timeLeft = 5;
-      timer.innerText = timeLeft;
-      setTimeout(() => progress.style.width = "100%", 100);
-
-      const interval = setInterval(() => {
-        timeLeft--;
-        timer.innerText = timeLeft;
-        if (timeLeft <= 0) {
-          clearInterval(interval);
-          btn.disabled = false;
-          btn.className = "w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 rounded-xl text-xs cursor-pointer shadow-lg";
-          btn.innerText = "รับชมวิดีโอต่อ";
+        function renderContent() {
+            const main = document.getElementById('mainContent');
+            if (currentTab === 'home') {
+                main.innerHTML = `
+                    <div class="p-4 space-y-4">
+                        ${dramas.length > 0 ? `
+                        <div class="relative rounded-2xl overflow-hidden aspect-[16/9] shadow-lg cursor-pointer" onclick="openPlayer(${dramas[0].id})">
+                            <img src="${dramas[0].cover}" class="w-full h-full object-cover">
+                            <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent flex flex-col justify-end p-4">
+                                <span class="bg-rose-600 text-white text-[10px] font-bold px-2 py-0.5 rounded w-fit mb-1">มาแรง 🔥</span>
+                                <h2 class="text-lg font-bold text-white">${dramas[0].title}</h2>
+                                <p class="text-xs text-slate-300">หมวด: ${dramas[0].category}</p>
+                            </div>
+                        </div>` : ''}
+                        <div>
+                            <h3 class="font-bold text-sm text-white mb-3">ซีรีส์ทั้งหมด</h3>
+                            <div class="grid grid-cols-2 gap-3">
+                                ${dramas.map(d => `
+                                    <div onclick="openPlayer(${d.id})" class="bg-slate-900 rounded-xl overflow-hidden border border-slate-800 cursor-pointer group">
+                                        <div class="aspect-[3/4] overflow-hidden relative">
+                                            <img src="${d.cover}" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+                                            <div class="absolute bottom-2 right-2 bg-black/60 backdrop-blur-sm text-[10px] px-2 py-0.5 rounded text-white">${d.eps} ตอน</div>
+                                        </div>
+                                        <div class="p-2.5">
+                                            <h4 class="font-semibold text-xs text-white truncate">${d.title}</h4>
+                                            <p class="text-[10px] text-slate-400 mt-0.5">${d.category}</p>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else if (currentTab === 'explore') {
+                main.innerHTML = `<div class="p-4 space-y-3"><input type="text" oninput="searchDrama(this.value)" placeholder="ค้นหาชื่อซีรีส์..." class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-2 text-xs text-white focus:outline-none focus:border-rose-500"><div id="exploreList" class="grid grid-cols-2 gap-3 mt-3">${dramas.map(d => `<div onclick="openPlayer(${d.id})" class="bg-slate-900 rounded-xl overflow-hidden border border-slate-800 cursor-pointer"><div class="aspect-[3/4]"><img src="${d.cover}" class="w-full h-full object-cover"></div><div class="p-2.5"><h4 class="font-semibold text-xs text-white truncate">${d.title}</h4><p class="text-[10px] text-slate-400">${d.category}</p></div></div>`).join('')}</div></div>`;
+            } else if (currentTab === 'vip') {
+                main.innerHTML = `<div class="p-6 text-center space-y-4"><div class="w-16 h-16 bg-gradient-to-tr from-amber-500 to-yellow-300 rounded-full flex items-center justify-center mx-auto shadow-lg"><i class="fa-solid fa-crown text-slate-950 text-2xl"></i></div><h2 class="text-xl font-bold text-white">สมาชิก VIP</h2><p class="text-xs text-slate-400">ดูซีรีส์ได้ทุกเรื่องแบบไม่อั้น ไม่มีโฆษณา</p><button onclick="alert('จำลองการสมัคร VIP สำเร็จ!')" class="w-full bg-amber-500 text-slate-950 font-bold py-3 rounded-xl text-xs">สมัคร VIP รายเดือน (199 บาท)</button></div>`;
+            } else if (currentTab === 'profile') {
+                main.innerHTML = `<div class="p-4 space-y-4"><div class="flex items-center space-x-3 bg-slate-900 p-4 rounded-2xl border border-slate-800"><div class="w-12 h-12 bg-rose-600 rounded-full flex items-center justify-center font-bold text-white">DB</div><div><h3 class="font-bold text-sm text-white">คุณ Dechawat</h3><p class="text-[10px] text-slate-400">ผู้ใช้งานทั่วไป</p></div></div></div>`;
+            }
         }
-      }, 1000);
-    }
 
-    function finishAdAndResume() {
-      document.getElementById('adModal').classList.add('hidden');
-      stats.adViews += 1;
-      stats.revenue += (1 / 1000) * eCPM_THB;
-      localStorage.setItem('ad_stats', JSON.stringify(stats));
-      playVideoDirectly();
-    }
+        function openPlayer(id) {
+            activeDrama = dramas.find(x => x.id === id);
+            if(!activeDrama) return;
+            document.getElementById('playerDramaTitle').innerText = activeDrama.title;
+            document.getElementById('videoPlayer').src = activeDrama.video;
+            const grid = document.getElementById('episodesListGrid');
+            grid.innerHTML = '';
+            for(let i=1; i<=activeDrama.eps; i++) {
+                grid.innerHTML += `<button onclick="document.getElementById('playerEpTitle').innerText='กำลังเล่นตอนที่ ${i}'" class="py-2.5 rounded-lg text-xs font-semibold bg-rose-600 text-white">ตอนที่ ${i}</button>`;
+            }
+            document.getElementById('playerModal').classList.remove('hidden');
+        }
 
-    function closePlayer() {
-      player.pause();
-      document.getElementById('playerContainer').classList.add('hidden');
-    }
-
-    renderUserView();
-  </script>
+        function closePlayer() { document.getElementById('videoPlayer').pause(); document.getElementById('playerModal').classList.add('hidden'); }
+        function openWalletModal() { document.getElementById('walletModal').classList.remove('hidden'); }
+        function closeWalletModal() { document.getElementById('walletModal').classList.add('hidden'); }
+        function rechargeCoins(amt) { userCoins += amt; localStorage.setItem('db_coins', userCoins); document.getElementById('userCoins').innerText = userCoins; closeWalletModal(); alert(`เติมสำเร็จ +${amt} เหรียญ`); }
+        
+        renderContent();
+    </script>
 </body>
 </html>
+
